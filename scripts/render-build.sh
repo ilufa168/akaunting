@@ -3,6 +3,10 @@ set -e
 
 cd /var/www/html
 
+# Ensure writable directories (moved from Dockerfile to avoid build timeout)
+chown -R nginx:nginx storage bootstrap/cache 2>/dev/null || true
+chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+
 # Railway uses PORT env - make nginx listen on it (default 80 for Render)
 if [ -n "$PORT" ]; then
   sed -i "s/listen 80/listen $PORT/" /etc/nginx/sites-available/default.conf 2>/dev/null || true

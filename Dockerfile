@@ -24,7 +24,8 @@ COPY package.json package-lock.json* yarn.lock* ./
 RUN npm ci 2>/dev/null || npm install
 
 COPY --from=composer /app /app
-RUN npm run production 2>/dev/null || npm run prod 2>/dev/null || (npm run build 2>/dev/null; true)
+# Skip ~2min npm build if pre-built assets exist (avoids Railway timeout)
+RUN if [ ! -f public/mix-manifest.json ]; then npm run production 2>/dev/null || npm run prod 2>/dev/null || npm run build 2>/dev/null || true; fi
 
 # Final stage - nginx + PHP-FPM (with PostgreSQL support)
 FROM richarvey/nginx-php-fpm:3.1.6
@@ -52,10 +53,8 @@ ENV LOG_CHANNEL=stderr
 COPY scripts/render-build.sh /scripts/startup.sh
 RUN chmod +x /scripts/startup.sh
 
-# Create storage link and ensure writable directories
-RUN php artisan storage:link 2>/dev/null || true && \
-    chown -R nginx:nginx storage bootstrap/cache && \
-    chmod -R 775 storage bootstrap/cache
+# Storage link only (chown deferred to startup to avoid timeout)
+RUN php artisan storage:link 2>/dev/null || true
 
 # Run install/migrate before starting nginx
 CMD ["/bin/sh", "-c", "/scripts/startup.sh && exec /start.sh"]
