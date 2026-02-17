@@ -181,14 +181,19 @@ class Installer
      */
     public static function isDbValid($host, $port, $database, $username, $password)
     {
+        // Use DB_CONNECTION env var, fallback to config default (for Railway/Render)
+        $connection = env('DB_CONNECTION', config('database.default', 'mysql'));
+        
         Config::set('database.connections.install_test', [
             'host'      => $host,
             'port'      => $port,
             'database'  => $database,
             'username'  => $username,
             'password'  => $password,
-            'driver'    => $connection = config('database.default', 'mysql'),
+            'driver'    => $connection,
             'charset'   => config("database.connections.$connection.charset", 'utf8mb4'),
+            'sslmode'   => config("database.connections.$connection.sslmode", 'prefer'),
+            'search_path' => config("database.connections.$connection.search_path", 'public'),
         ]);
 
         try {
@@ -217,7 +222,8 @@ class Installer
             'DB_PREFIX'     =>  $prefix,
         ]);
 
-        $con = config('database.default', 'mysql');
+        // Use DB_CONNECTION env var, fallback to config default
+        $con = env('DB_CONNECTION', config('database.default', 'mysql'));
 
         // Change current connection
         $db = Config::get('database.connections.' . $con);
