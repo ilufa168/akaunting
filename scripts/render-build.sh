@@ -7,10 +7,18 @@ cd /var/www/html
 chown -R nginx:nginx storage bootstrap/cache 2>/dev/null || true
 chmod -R 775 storage bootstrap/cache 2>/dev/null || true
 
-# Railway uses PORT env - make nginx listen on it (default 80 for Render)
+# Railway uses PORT env - make nginx listen on it (must respond to pass health check)
 if [ -n "$PORT" ]; then
   sed -i "s/listen 80/listen $PORT/" /etc/nginx/sites-available/default.conf 2>/dev/null || true
 fi
+
+# Start nginx FIRST so Railway health check passes (app must respond on PORT)
+# Install runs in foreground - nginx handles requests (may show install/503 briefly)
+echo "Starting nginx in background..."
+/start.sh &
+NGINX_PID=$!
+sleep 5
+echo "Nginx started (PID $NGINX_PID)"
 
 # Get DB params - DATABASE_URL format: postgres://user:pass@host:port/dbname (Railway & Render)
 if [ -n "$DATABASE_URL" ]; then
@@ -27,7 +35,7 @@ else
   DB_PASS=${DB_PASSWORD}
 fi
 
-# Run migrations or full install
+# Run migrations or full install (nginx already serving - may show errors until install done)
 if [ "$APP_INSTALLED" = "true" ]; then
   echo "Running migrations..."
   php artisan migrate --force
@@ -52,3 +60,6 @@ fi
 php artisan config:cache
 php artisan route:cache 2>/dev/null || true
 php artisan view:cache 2>/dev/null || true
+
+echo "Install complete. Nginx running as PID 1."
+wait $NGINX_PID
