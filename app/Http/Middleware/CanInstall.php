@@ -15,8 +15,19 @@ class CanInstall
      */
     public function handle($request, Closure $next)
     {
-        // Check if app is installed
-        if (env('APP_INSTALLED', false) == false) {
+        // Check if app is installed via env var
+        $envInstalled = env('APP_INSTALLED', false);
+        
+        // Also check if database has migrations table (actual installation state)
+        $dbInstalled = false;
+        try {
+            $dbInstalled = \DB::connection()->getPdo() && \DB::schema()->hasTable('migrations');
+        } catch (\Exception $e) {
+            $dbInstalled = false;
+        }
+        
+        // App needs installation if BOTH env says not installed AND no migrations table
+        if ($envInstalled == false && !$dbInstalled) {
             return $next($request);
         }
 
