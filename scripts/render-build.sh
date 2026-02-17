@@ -7,18 +7,10 @@ cd /var/www/html
 chown -R nginx:nginx storage bootstrap/cache 2>/dev/null || true
 chmod -R 775 storage bootstrap/cache 2>/dev/null || true
 
-# Railway uses PORT env - make nginx listen on it (must respond to pass health check)
+# Railway uses PORT env - make nginx listen on it
 if [ -n "$PORT" ]; then
   sed -i "s/listen 80/listen $PORT/" /etc/nginx/sites-available/default.conf 2>/dev/null || true
 fi
-
-# Start nginx FIRST so Railway health check passes (app must respond on PORT)
-# Install runs in foreground - nginx handles requests (may show install/503 briefly)
-echo "Starting nginx in background..."
-/start.sh &
-NGINX_PID=$!
-sleep 5
-echo "Nginx started (PID $NGINX_PID)"
 
 # Get DB params - DATABASE_URL format: postgres://user:pass@host:port/dbname (Railway & Render)
 if [ -n "$DATABASE_URL" ]; then
@@ -35,7 +27,7 @@ else
   DB_PASS=${DB_PASSWORD}
 fi
 
-# Run migrations or full install (nginx already serving - may show errors until install done)
+# Run migrations or full install (RAILWAY_HEALTHCHECK_TIMEOUT_SEC=300 gives time to complete)
 if [ "$APP_INSTALLED" = "true" ]; then
   echo "Running migrations..."
   php artisan migrate --force
@@ -53,7 +45,7 @@ else
     --admin-email="${ADMIN_EMAIL:-admin@example.com}" \
     --admin-password="${ADMIN_PASSWORD:-admin}" \
     --locale="${APP_LOCALE:-en-GB}" \
-    --no-interaction
+    --no-interaction || { echo "Install failed (DB may exist), trying migrate..."; php artisan migrate --force; true; }
 fi
 
 # Cache config for production
@@ -61,5 +53,4 @@ php artisan config:cache
 php artisan route:cache 2>/dev/null || true
 php artisan view:cache 2>/dev/null || true
 
-echo "Install complete. Nginx running as PID 1."
-wait $NGINX_PID
+echo "Install complete."
