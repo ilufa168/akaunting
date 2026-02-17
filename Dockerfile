@@ -1,5 +1,10 @@
-# Build stage - PHP dependencies
-FROM composer:2 AS composer
+# Build stage - PHP dependencies (use PHP 8.3 with required extensions)
+FROM php:8.3-cli-alpine AS composer
+RUN apk add --no-cache \
+    libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev oniguruma-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) bcmath intl gd pdo pdo_mysql zip \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 WORKDIR /app
 
 # Copy composer files and modules (needed for custom install paths)
@@ -43,9 +48,14 @@ ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV LOG_CHANNEL=stderr
 
+# Copy and prepare startup script (DB install + nginx)
+COPY scripts/render-build.sh /scripts/startup.sh
+RUN chmod +x /scripts/startup.sh
+
 # Create storage link and ensure writable directories
 RUN php artisan storage:link 2>/dev/null || true && \
     chown -R nginx:nginx storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
 
-CMD ["/start.sh"]
+# Run install/migrate before starting nginx
+CMD ["/bin/sh", "-c", "/scripts/startup.sh && exec /start.sh"]
