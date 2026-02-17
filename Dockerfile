@@ -28,9 +28,10 @@ COPY --from=composer /app /app
 RUN if [ ! -f public/mix-manifest.json ]; then npm run production 2>/dev/null || npm run prod 2>/dev/null || npm run build 2>/dev/null || true; fi
 
 # Final stage - nginx + PHP-FPM (with PostgreSQL support)
+# BCMath required by Akaunting; richarvey/nginx-php-fpm base does not include it
 FROM richarvey/nginx-php-fpm:3.1.6
 RUN apk add --no-cache postgresql-dev \
-    && docker-php-ext-install pdo_pgsql \
+    && docker-php-ext-install bcmath pdo_pgsql \
     && apk del postgresql-dev
 WORKDIR /var/www/html
 
