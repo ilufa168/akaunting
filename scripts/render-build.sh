@@ -27,9 +27,12 @@ else
   DB_PASS=${DB_PASSWORD}
 fi
 
+# Check if already installed (migrations table exists) - handles Railway restart case
+DB_TABLE_EXISTS=$(php artisan tinker --execute="try { \DB::connection()->getPdo(); echo \DB::schema()->hasTable('migrations') ? 'yes' : 'no'; } catch (\Exception \$e) { echo 'no'; }" 2>/dev/null || echo "no")
+
 # Run migrations or full install (RAILWAY_HEALTHCHECK_TIMEOUT_SEC=300 gives time to complete)
-if [ "$APP_INSTALLED" = "true" ]; then
-  echo "Running migrations..."
+if [ "$APP_INSTALLED" = "true" ] || [ "$DB_TABLE_EXISTS" = "yes" ]; then
+  echo "App already installed (APP_INSTALLED=$APP_INSTALLED, migrations table=$DB_TABLE_EXISTS). Running migrations..."
   php artisan migrate --force
 else
   echo "Running Akaunting install..."
