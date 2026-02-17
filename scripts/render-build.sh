@@ -3,7 +3,12 @@ set -e
 
 cd /var/www/html
 
-# Get DB params - Render provides DATABASE_URL (postgres://user:pass@host:port/dbname)
+# Railway uses PORT env - make nginx listen on it (default 80 for Render)
+if [ -n "$PORT" ]; then
+  sed -i "s/listen 80/listen $PORT/" /etc/nginx/sites-available/default.conf 2>/dev/null || true
+fi
+
+# Get DB params - DATABASE_URL format: postgres://user:pass@host:port/dbname (Railway & Render)
 if [ -n "$DATABASE_URL" ]; then
   DB_HOST=$(php -r "echo parse_url(getenv('DATABASE_URL'), PHP_URL_HOST) ?: 'localhost';")
   DB_PORT=$(php -r "echo parse_url(getenv('DATABASE_URL'), PHP_URL_PORT) ?: '5432';")
