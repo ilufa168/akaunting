@@ -1,0 +1,41 @@
+# Render Blueprint for Akaunting
+# Deploy: Push to GitHub, then go to https://dashboard.render.com/blueprints -> New Blueprint Instance -> Connect your repo
+
+databases:
+  - name: akaunting-db
+    plan: free
+    databaseName: akaunting
+    user: akaunting
+
+services:
+  - type: web
+    runtime: docker
+    name: akaunting
+    region: oregon
+
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: akaunting-db
+          property: connectionString
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_INSTALLED
+        value: "false"
+      # APP_URL will be set automatically by Render for web services, or set manually after first deploy
+      - key: APP_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: COMPANY_NAME
+        value: "My Company"
+      - key: COMPANY_EMAIL
+        sync: false

@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Abstracts\Http\Controller;
+use App\Http\Requests\Auth\Login as Request;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Str;
+
+class Login extends Controller
+{
+    use AuthenticatesUsers;
+
+    /**
+     * Where to redirect users after login.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('guest', ['except' => 'destroy']);
+    }
+
+    public function create()
+    {
+        return view('auth.login.create');
+    }
+
+    public function store(Request $request)
+    {
+        // Only return JSON when the request comes from our Vue Form plugin (Ajax)
+        $wantsJson = $request->header('X-Requested-With') === 'XMLHttpRequest';
+
+        // Attempt to login
+        if (! auth()->attempt($request->only('email', 'password'), $request->get('remember', false))) {
+            return $wantsJson
+                ? response()->json([
+                    'status' => null,
+                    'success' => false,
+                    'error' => true,
+                    'message' => trans('auth.failed'),
+                    'data' => null,
+                    'redirect' => null,
+                ])
+                : redirect()->route('login')->with('flash_notification', [['level' => 'error', 'message' => trans('auth.failed')]]);
+        }
+
+        // Get user object
+        $user = user();
+
+        // Check if user is enabled
+        if (! $user->enabled) {
+            $this->logout();
+
+            return $wantsJson
+                ? response()->json([
+                    'status' => null,
+                    'success' => false,
+                    'error' => true,
+                    'message' => trans('auth.disabled'),
+                    'data' => null,
+                    'redirect' => null,
+                ])
+                : redirect()->route('login')->with('flash_notification', [['level' => 'error', 'message' => trans('auth.disabled')]]);
+        }
+
+        $company = $user->withoutEvents(function () use ($user) {
+            return $user->companies()->enabled()->first();
+        });
+
+        // Logout if no company assigned
+        if (! $company) {
+            $this->logout();
+
+            return $wantsJson
+                ? response()->json([
+                    'status' => null,
+                    'success' => false,
+                    'error' => true,
+                    'message' => trans('auth.error.no_company'),
+                    'data' => null,
+                    'redirect' => null,
+                ])
+                : redirect()->route('login')->with('flash_notification', [['level' => 'error', 'message' => trans('auth.error.no_company')]]);
+        }
+
+        // Redirect to portal if is customer
+        if ($user->isCustomer()) {
+            $path = session('url.intended', '');
+
+            // Path must start with company id and 'portal' prefix
+            if (!Str::startsWith($path, $company->id . '/portal')) {
+                $path = route('portal.dashboard', ['company_id' => $company->id]);
+            }
+
+            $redirectUrl = url($path);
+
+            return $wantsJson
+                ? response()->json([
+                    'status' => null,
+                    'success' => true,
+                    'error' => false,
+                    'message' => trans('auth.login_redirect'),
+                    'data' => null,
+                    'redirect' => $redirectUrl,
+                ])
+                : redirect($redirectUrl);
+        }
+
+        // Redirect to landing page if is user
+        $url = route($user->landing_page, ['company_id' => $company->id]);
+        $redirectUrl = redirect()->intended($url)->getTargetUrl();
+
+        return $wantsJson
+            ? response()->json([
+                'status' => null,
+                'success' => true,
+                'error' => false,
+                'message' => trans('auth.login_redirect'),
+                'data' => null,
+                'redirect' => $redirectUrl,
+            ])
+            : redirect($redirectUrl);
+    }
+
+    public function destroy()
+    {
+        $this->logout();
+
+        return redirect()->route('login');
+    }
+
+    public function logout()
+    {
+        auth()->logout();
+
+        // Session destroy is required if stored in database
+        if (config('session.driver') == 'database') {
+            $request = app('Illuminate\Http\Request');
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            $request->session()->getHandler()->destroy($request->session()->getId());
+        }
+    }
+}
