@@ -21,11 +21,11 @@ RUN npm ci 2>/dev/null || npm install
 COPY --from=composer /app /app
 RUN npm run production 2>/dev/null || npm run prod 2>/dev/null || (npm run build 2>/dev/null; true)
 
-# Final stage - nginx + PHP-FPM (with PostgreSQL support added)
+# Final stage - nginx + PHP-FPM (with PostgreSQL support)
 FROM richarvey/nginx-php-fpm:3.1.6
 RUN apk add --no-cache postgresql-dev \
     && docker-php-ext-install pdo_pgsql \
-    && apk del postgresql-dev || true
+    && apk del postgresql-dev
 WORKDIR /var/www/html
 
 COPY --from=node /app .

@@ -1,5 +1,5 @@
 # Render Blueprint for Akaunting
-# Deploy: Push to GitHub, then go to https://dashboard.render.com/blueprints -> New Blueprint Instance -> Connect your repo
+# Deploy: Go to https://dashboard.render.com/blueprints -> New Blueprint Instance -> Connect https://github.com/moolbneid-org/akaunting
 
 databases:
   - name: akaunting-db
@@ -12,6 +12,7 @@ services:
     runtime: docker
     name: akaunting
     region: oregon
+    repo: https://github.com/moolbneid-org/akaunting
 
     envVars:
       - key: DATABASE_URL

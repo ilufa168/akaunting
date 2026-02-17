@@ -9,16 +9,14 @@ This guide walks you through deploying this Akaunting instance to Render.
 
 ## Step 1: Push to GitHub
 
-1. Create a new repository on GitHub (e.g. `akaunting-demo`).
+1. Ensure your latest code is pushed to [github.com/moolbneid-org/akaunting](https://github.com/moolbneid-org/akaunting):
 
-2. From your project directory, run:
+2. From your project directory:
 
    ```bash
-   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
    git add .
    git commit -m "Add Render deployment config"
-   git branch -M main
-   git push -u origin main
+   git push origin main
    ```
 
    **Note:** The `.env` file is in `.gitignore` and won't be pushed—Render uses its own environment variables.
