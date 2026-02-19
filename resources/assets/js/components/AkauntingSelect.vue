@@ -20,7 +20,7 @@
             :readonly="readonly"
             :collapse-tags="collapse"
             :loading="loading"
-            class="forms"
+            class="forms w-full"
         >
             <div v-if="loading" class="el-select-dropdown__wrap" slot="empty">
                 <p class="el-select-dropdown__empty pt-2 pb-0 loading">

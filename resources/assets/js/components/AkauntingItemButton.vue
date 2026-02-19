@@ -1,7 +1,7 @@
 <template>
     <div :id="'select-item-button-' + _uid" class="w-full border-b">
-        <button type="button" class="w-full h-10 flex items-center justify-center text-purple font-medium disabled:bg-gray-200 hover:bg-gray-100" @click="showItems">
-            <span class="material-icons-outlined text-base font-bold ltr:mr-1 rtl:ml-1">add</span>
+        <button type="button" class="w-full min-h-[44px] py-3 flex items-center justify-center text-purple font-medium disabled:bg-gray-200 hover:bg-gray-100 border-2 border-dashed border-gray-300 hover:border-purple rounded-lg transition-colors" @click="showItems">
+            <span class="material-icons-outlined text-lg font-bold ltr:mr-2 rtl:ml-2">add</span>
              {{ addItemText }}
         </button>
  

@@ -96,6 +96,17 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        // For migrating local data to Railway (uses RAILWAY_DATABASE_URL - public URL from Railway dashboard)
+        'railway' => [
+            'driver' => 'pgsql',
+            'url' => env('RAILWAY_DATABASE_URL'),
+            'charset' => 'utf8',
+            'prefix' => env('DB_PREFIX', 'ak_'),
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'require',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),

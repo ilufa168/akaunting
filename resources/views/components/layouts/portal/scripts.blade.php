@@ -52,16 +52,16 @@
 
         //container animation when left menu shrinking
         function contentTransitionLeft() {
-            sectionContent.classList.add("xl:ltr:ml-0", "xl:rtl:mr-0");
-            sectionContent.classList.remove("xl:ltr:ml-64", "xl:rtl:mr-64");
+            sectionContent.classList.add("xl:ltr:ml-20", "xl:rtl:mr-20");
+            sectionContent.classList.remove("xl:ltr:ml-[19rem]", "xl:rtl:mr-[19rem]");
             toggleButton.querySelector("span").classList.remove("ltr:rotate-90", "rtl:-rotate-90");
             toggleButton.querySelector("span").classList.add("ltr:-rotate-90", "rtl:rotate-90");
         }
 
         //container animation when left menu unshrinking
         function contentTransitionRight() {
-            sectionContent.classList.remove("xl:ltr:ml-0", "xl:rtl:mr-0");
-            sectionContent.classList.add("xl:ltr:ml-64", "xl:rtl:mr-64");
+            sectionContent.classList.remove("xl:ltr:ml-20", "xl:rtl:mr-20");
+            sectionContent.classList.add("xl:ltr:ml-[19rem]", "xl:rtl:mr-[19rem]");
             toggleButton.querySelector("span").classList.remove("ltr:-rotate-90", "rtl:rotate-90");
             toggleButton.querySelector("span").classList.add("ltr:rotate-90", "rtl:-rotate-90");
         }
@@ -152,8 +152,8 @@
                         menuClose.classList.add("ltr:-right-2", "rtl:right-12");
                     }
 
-                    sectionContent.classList.remove("xl:ltr:ml-0", "xl:rtl:mr-0");
-                    sectionContent.classList.add("xl:ltr:ml-64", "xl:rtl:mr-64");
+                    sectionContent.classList.remove("xl:ltr:ml-20", "xl:rtl:mr-20");
+                    sectionContent.classList.add("xl:ltr:ml-[19rem]", "xl:rtl:mr-[19rem]");
                      //for hidden menu, show close icon scenario
 
                 //remove active (cancel text) class form target icon
@@ -186,8 +186,8 @@
 
                     //for hidden menu, show close icon scenario
                     if (sideBar.classList.contains("menu-list-hidden")) {
-                        sectionContent.classList.add("xl:ltr:ml-0", "xl:rtl:mr-0");
-                        sectionContent.classList.remove("xl:ltr:ml-64", "xl:rtl:mr-64");
+                        sectionContent.classList.add("xl:ltr:ml-20", "xl:rtl:mr-20");
+                        sectionContent.classList.remove("xl:ltr:ml-[19rem]", "xl:rtl:mr-[19rem]");
                     }
                     //for hidden menu, show close icon scenario
                 });

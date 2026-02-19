@@ -68,7 +68,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', ''),
+    'url' => env('APP_URL') ?: (env('RAILWAY_PUBLIC_DOMAIN') ? 'https://' . env('RAILWAY_PUBLIC_DOMAIN') : ''),
 
     'asset_url' => env('ASSET_URL'),
 

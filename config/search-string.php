@@ -140,6 +140,19 @@ return [
         ],
     ],
 
+    \Modules\Outlets\Models\Outlet::class => [
+        'columns' => [
+            'id',
+            'name' => ['searchable' => true],
+            'address' => ['searchable' => true],
+            'phone' => ['searchable' => true],
+            'email' => ['searchable' => true],
+            'enabled' => ['boolean' => true],
+            'created_at' => ['date' => true],
+            'updated_at' => ['date' => true],
+        ],
+    ],
+
     App\Models\Banking\Reconciliation::class => [
         'columns' => [
             'id',

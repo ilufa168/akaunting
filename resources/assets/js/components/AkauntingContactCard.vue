@@ -2,12 +2,13 @@
     <div :id="'select-contact-card-' + _uid">
         <div class="relative" :class="[{'fs-exclude': show.contact_selected}]">
             <div v-if="!show.contact_selected">
-                <div class="aka-select aka-select--medium is-open" tabindex="0">
-                    <div class="w-full h-33 bg-white hover:bg-gray-100 rounded-lg border border-light-gray disabled:bg-gray-200 mt-1 text-purple font-medium" :class="[{'border-red': error}]">
+                <div class="aka-select aka-select--medium is-open" tabindex="0" role="button" :aria-required="required" aria-label="Select or search contact" @keydown.enter.prevent="onContactList" @keydown.space.prevent="onContactList">
+                    <div class="w-full min-h-[8.25rem] bg-gray-50 hover:bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 hover:border-purple disabled:bg-gray-200 mt-1 text-purple font-medium transition-colors focus-within:ring-2 focus-within:ring-purple focus-within:border-purple" :class="[{'border-red': error}]">
                         <div class="text-black h-full">
-                            <button type="button" class="w-full h-full flex flex-col items-center justify-center" @click="onContactList">
-                                <span class="material-icons-outlined text-7xl text-black-400 pointer-events-none">person_add</span>
-                                <span class="text-add-contact pointer-events-none"> {{ addContactText }} </span>
+                            <button type="button" class="w-full h-full min-h-[8.25rem] flex flex-col items-center justify-center gap-1 px-4 py-6" @click="onContactList">
+                                <span class="material-icons-outlined text-5xl text-gray-400 pointer-events-none">person_add</span>
+                                <span class="text-add-contact pointer-events-none text-base font-medium"> {{ addContactText }} </span>
+                                <span class="text-xs text-gray-500 pointer-events-none">Search or select</span>
                             </button>
                         </div>
                     </div>
@@ -16,12 +17,13 @@
                         v-html="error">
                     </div>
 
-                    <div class="absolute top-0 left-0 right-0 bg-white border rounded-lg" style="z-index: 999;" v-if="show.contact_list">
+                    <div class="absolute top-0 left-0 right-0 bg-white border rounded-lg" style="z-index: 999;" v-if="show.contact_list" @keydown.esc.prevent="show.contact_list = false">
                         <div class="relative">
                             <span class="material-icons-round absolute left-4 top-3 text-lg">search</span>
                             <input
                                 type="text"
                                 data-input="true"
+                                aria-label="Search contact"
                                 class="w-full text-sm py-2.5 mt-1 border text-black placeholder-light-gray bg-white disabled:bg-gray-200 focus:outline-none focus:ring-transparent focus:border-purple px-10 border-t-0 border-l-0 border-r-0 border-gray-200 rounded-none"
                                 autocapitalize="default" autocorrect="ON"
                                 :placeholder="placeholder"
@@ -29,6 +31,7 @@
                                 :value="search"
                                 @input="onInput($event)"
                                 @keyup.enter="onInput($event)"
+                                @keydown.esc.prevent="show.contact_list = false"
                             />
                         </div>
 
@@ -154,6 +157,11 @@ export default {
             type: String,
             default: '',
             description: 'Contact create route'
+        },
+        required: {
+            type: Boolean,
+            default: false,
+            description: 'Whether the contact field is required'
         },
         error: {
             type: String,

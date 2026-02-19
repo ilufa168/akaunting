@@ -11,7 +11,7 @@
     ></x-slot>
 
     <x-slot name="content">
-        <x-form.container>
+        <div class="relative mt-4 w-full min-w-0">
             <x-form id="transaction" route="transactions.store">
                 <x-form.section>
                     <x-slot name="head">
@@ -19,18 +19,20 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.date name="paid_at" label="{{ trans('general.date') }}" icon="calendar_today" value="{{ request()->get('paid_at', Date::now()->toDateString()) }}" show-date-format="{{ company_date_format() }}" date-format="Y-m-d" autocomplete="off" />
+                        <div class="grid grid-cols-1 sm:grid-cols-6 gap-x-6 gap-y-5 sm:col-span-6">
+                            <x-form.group.date name="paid_at" label="{{ trans('general.date') }}" icon="calendar_today" value="{{ request()->get('paid_at', Date::now()->toDateString()) }}" show-date-format="{{ company_date_format() }}" date-format="Y-m-d" autocomplete="off" form-group-class="sm:col-span-3" />
 
-                        <x-form.group.payment-method />
+                            <x-form.group.payment-method form-group-class="sm:col-span-3" />
 
-                        <x-form.group.account />
+                            <x-form.group.account form-group-class="sm:col-span-3" />
 
-                        <x-form.group.money name="amount" label="{{ trans('general.amount') }}" value="0" autofocus="autofocus" :currency="$currency" dynamicCurrency="currency" input="onChangeTax(form.tax_ids)" />
+                            <x-form.group.money name="amount" label="{{ trans('general.amount') }}" value="0" autofocus="autofocus" :currency="$currency" dynamicCurrency="currency" input="onChangeTax(form.tax_ids)" form-group-class="sm:col-span-3" />
 
-                        <x-form.group.textarea name="description" label="{{ trans('general.description') }}" not-required />
+                            <x-form.group.textarea name="description" label="{{ trans('general.description') }}" not-required form-group-class="sm:col-span-6" />
 
-                        <x-form.input.hidden name="currency_code" :value="$account_currency_code" />
-                        <x-form.input.hidden name="currency_rate" value="1" />
+                            <x-form.input.hidden name="currency_code" :value="$account_currency_code" />
+                            <x-form.input.hidden name="currency_rate" value="1" />
+                        </div>
                     </x-slot>
                 </x-form.section>
 
@@ -40,13 +42,15 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.category :type="$real_type" :selected="setting('default.' . $real_type . '_category')" />
+                        <div class="grid grid-cols-1 sm:grid-cols-6 gap-x-6 gap-y-5 sm:col-span-6">
+                            <x-form.group.category :type="$real_type" :selected="setting('default.' . $real_type . '_category')" form-group-class="sm:col-span-3" />
 
-                        @includeWhen(module_is_enabled('outlets'), 'outlets::partials.transaction-outlet-field', ['selected' => old('outlet_id', '')])
+                            @includeWhen(module_is_enabled('outlets'), 'outlets::partials.transaction-outlet-field', ['selected' => old('outlet_id', '')])
 
-                        <x-form.group.contact :type="$contact_type" not-required />
+                            <x-form.group.contact :type="$contact_type" not-required form-group-class="sm:col-span-3" />
 
-                        <x-form.group.tax name="tax_ids" multiple with-summary not-required :currency="$currency" change="onChangeTax" />
+                            <x-form.group.tax name="tax_ids" multiple with-summary not-required :currency="$currency" change="onChangeTax" form-group-class="sm:col-span-6" />
+                        </div>
                     </x-slot>
                 </x-form.section>
 
@@ -56,11 +60,13 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.text name="number" label="{{ trans_choice('general.numbers', 1) }}" value="{{ $number }}" />
+                        <div class="grid grid-cols-1 sm:grid-cols-6 gap-x-6 gap-y-5 sm:col-span-6">
+                            <x-form.group.text name="number" label="{{ trans_choice('general.numbers', 1) }}" value="{{ $number }}" form-group-class="sm:col-span-3" />
 
-                        <x-form.group.text name="reference" label="{{ trans('general.reference') }}" not-required />
+                            <x-form.group.text name="reference" label="{{ trans('general.reference') }}" not-required form-group-class="sm:col-span-3" />
 
-                        <x-form.group.attachment />
+                            <x-form.group.attachment form-group-class="sm:col-span-6" />
+                        </div>
                     </x-slot>
                 </x-form.section>
 
@@ -72,12 +78,12 @@
 
                 <x-form.input.hidden name="type" :value="$real_type" />
             </x-form>
-        </x-form.container>
+        </div>
     </x-slot>
 
     @push('scripts_start')
         <script type="text/javascript">
-            var transaction_taxes = {!! $taxes !!};
+            var transaction_taxes = {!! json_encode($taxes) !!};
 
             if (typeof aka_currency !== 'undefined') {
                 aka_currency = {!! json_encode(! empty($currency) ? $currency : config('money.currencies.' . company()->currency)) !!};

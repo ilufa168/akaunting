@@ -7,12 +7,14 @@
     </x-slot>
 
     <x-slot name="body">
-        @if (! $hideTaxNumber)
-            <x-form.group.text name="tax_number" label="{{ trans($textTaxNumber) }}" not-required />
-        @endif
+        <div class="grid grid-cols-1 sm:grid-cols-6 gap-x-6 gap-y-5 sm:col-span-6">
+            @if (! $hideTaxNumber)
+                <x-form.group.text name="tax_number" label="{{ trans($textTaxNumber) }}" not-required form-group-class="sm:col-span-3" />
+            @endif
 
-        @if (! $hideCurrency)
-            <x-form.group.currency />
-        @endif
+            @if (! $hideCurrency)
+                <x-form.group.currency form-group-class="sm:col-span-3" />
+            @endif
+        </div>
     </x-slot>
 </x-form.section>

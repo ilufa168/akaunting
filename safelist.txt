@@ -1,3 +1,13 @@
+xl:ltr:ml-[19rem]
+xl:rtl:mr-[19rem]
+xl:ltr:ml-20
+xl:rtl:mr-20
+sm:col-span-1
+sm:col-span-2
+sm:col-span-3
+sm:col-span-4
+sm:col-span-5
+sm:col-span-6
 hover:bg-silver-600
 hover:bg-peach_orange-600
 hover:bg-wisteria-600

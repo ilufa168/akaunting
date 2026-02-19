@@ -1,4 +1,4 @@
-<x-form.container>
+<div class="relative mt-4 w-full min-w-0">
     <x-form
         id="{{ $formId }}"
         :route="$formRoute"
@@ -29,4 +29,4 @@
 
         <x-contacts.form.buttons type="{{ $type }}" />
     </x-form>
-</x-form.container>
+</div>

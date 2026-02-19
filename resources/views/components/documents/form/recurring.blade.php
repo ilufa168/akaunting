@@ -4,6 +4,7 @@
     </x-slot>
 
     <x-slot name="body">
+        <div class="sm:col-span-6">
         @if (empty($document))
             <x-form.group.recurring :type="$type" @started="onChangeRecurringDate()" />
         @else
@@ -20,5 +21,6 @@
                 :send-email="$document ? $document->recurring->auto_send : null"
             />
         @endif
+        </div>
     </x-slot>
 </x-form.section>

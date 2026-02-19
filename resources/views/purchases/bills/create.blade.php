@@ -1,4 +1,3 @@
-
 <x-layouts.admin>
     <x-slot name="title">
         {{ trans('general.title.new', ['type' => setting('bill.title', trans_choice('general.bills', 1))]) }}

@@ -13,7 +13,7 @@
 
         <x-button
             type="submit"
-            class="relative flex items-center justify-center bg-green hover:bg-green-700 text-white px-6 py-1.5 text-base rounded-lg disabled:bg-green-100"
+            class="relative flex items-center justify-center min-h-[44px] bg-green hover:bg-green-700 text-white px-6 py-3 sm:py-1.5 text-base rounded-lg disabled:bg-green-100"
             ::disabled="{!! $saveDisabled !!}"
             override="class"
         >

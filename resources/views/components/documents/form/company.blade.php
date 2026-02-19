@@ -7,59 +7,63 @@
     </x-slot>
 
     <x-slot name="body">
-        <div class="sm:col-span-2 grid gap-x-8 gap-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-6 gap-x-6 gap-y-5 sm:col-span-6">
             @stack('title_start')
 
             @if (! $hideDocumentTitle)
-                <x-form.group.text
-                    name="title"
-                    label="{{ trans('settings.invoice.title') }}"
-                    value="{{ $title }}"
-                    not-required
-                 />
+                <div class="sm:col-span-3">
+                    <x-form.group.text
+                        name="title"
+                        label="{{ trans('settings.invoice.title') }}"
+                        value="{{ $title }}"
+                        not-required
+                     />
+                </div>
             @endif
 
             @stack('subheading_start')
 
             @if (! $hideDocumentSubheading)
-                <x-form.group.text
-                    name="subheading"
-                    label="{{ trans('settings.invoice.subheading') }}"
-                    value="{{ $subheading }}"
-                    not-required
-                 />
+                <div class="sm:col-span-3">
+                    <x-form.group.text
+                        name="subheading"
+                        label="{{ trans('settings.invoice.subheading') }}"
+                        value="{{ $subheading }}"
+                        not-required
+                     />
+                </div>
             @endif
-        </div>
 
-        <div class="sm:col-span-2">
             @if (! $hideLogo)
-                <x-form.input.hidden name="company_logo" data-field="setting" />
-                <x-form.group.file name="company_logo" label="{{ trans('settings.company.logo') }}" :value="setting('company.logo')" not-required data-field="setting" />
+                <div class="sm:col-span-3">
+                    <x-form.input.hidden name="company_logo" data-field="setting" />
+                    <x-form.group.file name="company_logo" label="{{ trans('settings.company.logo') }}" :value="setting('company.logo')" not-required data-field="setting" />
+                </div>
             @endif
-        </div>
 
-        <div class="sm:col-span-2 relative">
             @if (! $hideCompanyEdit)
-                <akaunting-company-edit
-                    company-id="{{ company_id() }}"
-                    button-text="{{ trans('settings.company.edit_your_business_address') }}"
-                    tax-number-text="{{ trans('general.tax_number') }}"
-                    :company="{{ json_encode($company) }}"
-                    :company-form="{{ json_encode([
-                        'show' => true,
-                        'text' => trans('settings.company.edit_your_business_address'),
-                        'buttons' => [
-                            'cancel' => [
-                                'text' => trans('general.cancel'),
-                                'class' => 'btn-outline-secondary'
-                            ],
-                            'confirm' => [
-                                'text' => trans('general.save'),
-                                'class' => 'disabled:bg-green-100'
+                <div class="sm:col-span-3 flex items-end pb-2">
+                    <akaunting-company-edit
+                        company-id="{{ company_id() }}"
+                        button-text="{{ trans('settings.company.edit_your_business_address') }}"
+                        tax-number-text="{{ trans('general.tax_number') }}"
+                        :company="{{ json_encode($company) }}"
+                        :company-form="{{ json_encode([
+                            'show' => true,
+                            'text' => trans('settings.company.edit_your_business_address'),
+                            'buttons' => [
+                                'cancel' => [
+                                    'text' => trans('general.cancel'),
+                                    'class' => 'btn-outline-secondary'
+                                ],
+                                'confirm' => [
+                                    'text' => trans('general.save'),
+                                    'class' => 'disabled:bg-green-100'
+                                ]
                             ]
-                        ]
-                    ])}}"
-                ></akaunting-company-edit>
+                        ])}}"
+                    ></akaunting-company-edit>
+                </div>
             @endif
         </div>
     </x-slot>

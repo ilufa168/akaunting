@@ -1,6 +1,6 @@
 <x-loading.content />
 
-<div class="relative mt-4">
+<div class="relative mt-4 w-full min-w-0">
     <x-form 
         id="{{ $formId }}"
         :route="$formRoute"
@@ -11,7 +11,7 @@
             <x-documents.form.company :type="$type" />
         @endif
 
-        <x-documents.form.main type="{{ $type }}" />
+        <x-documents.form.main type="{{ $type }}" :document="$document" />
 
         @if ($showRecurring)
             <x-documents.form.recurring type="{{ $type }}" />

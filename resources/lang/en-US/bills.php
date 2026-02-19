@@ -42,7 +42,11 @@ return [
     'make_payment'          => 'Make Payment',
 
     'form_description' => [
-        'billing'           => 'Billing details appear in your bill. Bill Date is used in the dashboard and reports. Select the date you expect to pay as the Due Date.',
+        'billing'           => 'Core billing information.',
+        'tooltip' => [
+            'bill_date'     => 'Used in the dashboard and reports.',
+            'due_date'      => 'Select the date you expect to pay.',
+        ],
     ],
 
     'messages' => [

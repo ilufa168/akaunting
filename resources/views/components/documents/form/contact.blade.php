@@ -1,4 +1,5 @@
 <akaunting-contact-card
+    :required="{{ $required ?? false ? 'true' : 'false' }}"
     placeholder="{{ $placeholder }}"
     no-data-text="{{ trans('general.no_data') }}"
     no-matching-data-text="{{ trans('general.no_matching_data') }}"

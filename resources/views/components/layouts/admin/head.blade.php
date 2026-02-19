@@ -28,8 +28,8 @@
     <link rel="stylesheet" href="{{ asset('vendor/quicksand/css/quicksand.css?v=' . version('short')) }}" type="text/css">
 
     <!-- Css -->
-    <link rel="stylesheet" href="{{ asset('css//third_party/swiper-bundle.min.css?v=' . version('short')) }}" type="text/css">
-    <link rel="stylesheet" href="{{ asset('css//third_party/vue-html-editor.css?v=' . version('short')) }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('css/third_party/swiper-bundle.min.css?v=' . version('short')) }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('css/third_party/vue-html-editor.css?v=' . version('short')) }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('css/element.css?v=' . version('short')) }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('css/app.css?v=' . version('short')) }}" type="text/css">
 

@@ -65,6 +65,11 @@ module.exports = {
         {
             pattern: /^translate/,
         },
+
+        {
+            pattern: /^col-span-/,
+            variants: ['responsive'],
+        },
     ],
 
     darkMode: 'class', // or 'media' or 'class',
@@ -520,15 +525,15 @@ module.exports = {
                     },
 
                     '@screen lg': {
-                        maxWidth: '1000px',
+                        maxWidth: '1536px',
                     },
 
                     '@screen xl': {
-                        maxWidth: '895px',
+                        maxWidth: '1792px',
                     },
 
                     '@screen 2xl': {
-                        maxWidth: '1145px',
+                        maxWidth: '1920px',
                     },
                 }
             })

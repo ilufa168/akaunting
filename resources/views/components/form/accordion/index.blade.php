@@ -14,7 +14,7 @@
         x-ref="accordion_{{ $type }}"
         x-bind:class="{{ $type }} == 'open' ? 'h-auto ' : 'scale-y-0 h-0'"
     >
-        <div class="grid sm:grid-cols-7 gap-x-8 gap-y-6 my-3.5">
+        <div class="grid sm:grid-cols-6 gap-x-6 gap-y-5 my-3.5">
             {!! $body !!}
         </div>
     </div>

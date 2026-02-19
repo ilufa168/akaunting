@@ -38,6 +38,9 @@ class Contact extends Component
     /** @var $error  */
     public $error;
 
+    /** @var bool */
+    public $required;
+
     /**
      * Create a new component instance.
      *
@@ -45,7 +48,8 @@ class Contact extends Component
      */
     public function __construct(
         $type, $contact = false, $contacts = [], $searchRoute = '', $createRoute = '', string $error = '',
-        $textAddContact = '', $textCreateNewContact = '', $textEditContact = '', $textContactInfo = '', $textChooseDifferentContact = ''
+        $textAddContact = '', $textCreateNewContact = '', $textEditContact = '', $textContactInfo = '', $textChooseDifferentContact = '',
+        bool $required = false
     ) {
         $this->type = $type;
         $this->contact = $contact;
@@ -59,6 +63,7 @@ class Contact extends Component
         $this->textEditContact = $this->getTextEditContact($type, $textEditContact);
         $this->textContactInfo = $this->getTextContactInfo($type, $textContactInfo);
         $this->textChooseDifferentContact = $this->getTextChooseDifferentContact($type, $textChooseDifferentContact);
+        $this->required = $required;
     }
 
     /**

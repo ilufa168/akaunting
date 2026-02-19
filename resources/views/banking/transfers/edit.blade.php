@@ -4,7 +4,7 @@
     </x-slot>
 
     <x-slot name="content">
-        <x-form.container>
+        <div class="relative mt-4 w-full min-w-0">
             <x-form id="transfer" method="PATCH" :route="['transfers.update', $transfer->id]" :model="$transfer">
                 <x-form.section>
                     <x-slot name="head">
@@ -12,41 +12,31 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.select name="from_account_id" label="{{ trans('transfers.from_account') }}" :options="$accounts" change="onChangeFromAccount" />
+                        <div class="grid grid-cols-1 sm:grid-cols-6 gap-x-6 gap-y-5 sm:col-span-6">
+                            <x-form.group.select name="from_account_id" label="{{ trans('transfers.from_account') }}" :options="$accounts" change="onChangeFromAccount" form-group-class="sm:col-span-3" />
 
-                        <x-form.group.select name="to_account_id" label="{{ trans('transfers.to_account') }}" :options="$accounts" change="onChangeToAccount" />
+                            <x-form.group.select name="to_account_id" label="{{ trans('transfers.to_account') }}" :options="$accounts" change="onChangeToAccount" form-group-class="sm:col-span-3" />
 
-                        @if ($transfer->from_currency_code != $transfer->to_currency_code)
-                            <div v-if="show_rate" class="sm:col-span-3">
-                                <x-form.input.hidden name="from_currency_code" :value="$transfer->from_currency_code" v-model="form.from_currency_code" />
+                            <div v-if="show_rate" class="contents">
+                                <div class="sm:col-span-3">
+                                    <x-form.input.hidden name="from_currency_code" :value="$transfer->from_currency_code" v-model="form.from_currency_code" />
 
-                                <x-form.group.text name="from_account_rate" label="{{ trans('transfers.from_account_rate') }}" v-disabled="form.from_currency_code == '{{ default_currency() }}'" />
+                                    <x-form.group.text name="from_account_rate" label="{{ trans('transfers.from_account_rate') }}" v-disabled="form.from_currency_code == '{{ default_currency() }}'" form-group-class="w-full" />
+                                </div>
+
+                                <div class="sm:col-span-3">
+                                    <x-form.input.hidden name="to_currency_code" :value="$transfer->to_currency_code" v-model="form.to_currency_code" />
+
+                                    <x-form.group.text name="to_account_rate" label="{{ trans('transfers.to_account_rate') }}" v-disabled="form.to_currency_code == '{{ default_currency() }}'" form-group-class="w-full" />
+                                </div>
                             </div>
 
-                            <div v-if="show_rate" class="sm:col-span-3">
-                                <x-form.input.hidden name="to_currency_code" :value="$transfer->to_currency_code" v-model="form.to_currency_code" />
+                            <x-form.group.date name="transferred_at" label="{{ trans('general.date') }}" icon="calendar_today" value="{{ Date::parse($transfer->transferred_at)->toDateString() }}" show-date-format="{{ company_date_format() }}" date-format="Y-m-d" autocomplete="off" form-group-class="sm:col-span-3" />
 
-                                <x-form.group.text name="to_account_rate" label="{{ trans('transfers.to_account_rate') }}" v-disabled="form.to_currency_code == '{{ default_currency() }}'" />
-                            </div>
-                        @else
-                            <div v-if="show_rate" class="sm:col-span-3">
-                                <x-form.input.hidden name="from_currency_code" :value="$transfer->from_currency_code" v-model="form.from_currency_code" />
+                            <x-form.group.money name="amount" label="{{ trans('general.amount') }}" :value="$transfer->amount" :currency="$currency" dynamicCurrency="currency" form-group-class="sm:col-span-3" />
 
-                                <x-form.group.text name="from_account_rate" label="{{ trans('transfers.from_account_rate') }}" v-disabled="form.from_currency_code == '{{ default_currency() }}'" />
-                            </div>
-
-                            <div v-if="show_rate" class="sm:col-span-3">
-                                <x-form.input.hidden name="to_currency_code" :value="$transfer->to_currency_code" v-model="form.to_currency_code" />
-
-                                <x-form.group.text name="to_account_rate" label="{{ trans('transfers.to_account_rate') }}" v-disabled="form.to_currency_code == '{{ default_currency() }}'" />
-                            </div>
-                        @endif
-
-                        <x-form.group.date name="transferred_at" label="{{ trans('general.date') }}" icon="calendar_today" value="{{ Date::parse($transfer->transferred_at)->toDateString() }}" show-date-format="{{ company_date_format() }}" date-format="Y-m-d" autocomplete="off" />
-
-                        <x-form.group.money name="amount" label="{{ trans('general.amount') }}" :value="$transfer->amount" :currency="$currency" dynamicCurrency="currency" />
-
-                        <x-form.group.textarea name="description" label="{{ trans('general.description') }}" not-required />
+                            <x-form.group.textarea name="description" label="{{ trans('general.description') }}" not-required form-group-class="sm:col-span-6" />
+                        </div>
                     </x-slot>
                 </x-form.section>
 
@@ -56,14 +46,16 @@
                     </x-slot>
 
                     <x-slot name="body">
-                        <x-form.group.payment-method />
+                        <div class="grid grid-cols-1 sm:grid-cols-6 gap-x-6 gap-y-5 sm:col-span-6">
+                            <x-form.group.payment-method form-group-class="sm:col-span-3" />
 
-                        <x-form.group.text name="reference" label="{{ trans('general.reference') }}" not-required />
+                            <x-form.group.text name="reference" label="{{ trans('general.reference') }}" not-required form-group-class="sm:col-span-3" />
 
-                        <x-form.group.attachment />
+                            <x-form.group.attachment form-group-class="sm:col-span-6" />
 
-                        <x-form.input.hidden name="currency_code" :value="$currency->code" v-model="form.currency_code" />
-                        <x-form.input.hidden name="currency_rate" :value="$currency->rate" v-model="form.currency_rate" />
+                            <x-form.input.hidden name="currency_code" :value="$currency->code" v-model="form.currency_code" />
+                            <x-form.input.hidden name="currency_rate" :value="$currency->rate" v-model="form.currency_rate" />
+                        </div>
                     </x-slot>
                 </x-form.section>
 
@@ -75,7 +67,7 @@
                 </x-form.section>
                 @endcan
             </x-form>
-        </x-form.container>
+        </div>
     </x-slot>
 
     @push('scripts_start')
