@@ -95,3 +95,6 @@ modules/*
 !modules/.gitkeep
 .laravelstatsrc
 .DS_Store
+railway.env.txt
+.env.backup
+*.log
