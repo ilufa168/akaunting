@@ -73,8 +73,7 @@ fabric.properties
 /node_modules
 /public/hot
 /public/storage
-/public/js
-/public/mix-manifest.json
+# /public/js and /public/mix-manifest.json are tracked (pre-built assets for VPS deploy)
 /storage/*.key
 /vendor
 /.idea
