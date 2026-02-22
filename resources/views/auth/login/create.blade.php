@@ -4,6 +4,14 @@
     </x-slot>
 
     <x-slot name="content">
+        @if(session('flash_notification'))
+            @foreach(session('flash_notification') as $notification)
+                <div class="w-full bg-red-100 text-red-600 p-3 rounded-sm font-semibold text-xs">
+                    {{ $notification['message'] }}
+                </div>
+            @endforeach
+        @endif
+
         <div>
             <img src="{{ asset('img/akaunting-logo-green.svg') }}" class="w-16" alt="Akaunting" />
 
