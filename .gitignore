@@ -97,3 +97,4 @@ modules/*
 railway.env.txt
 .env.backup
 *.log
+temp.txt

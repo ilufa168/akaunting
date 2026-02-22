@@ -61,10 +61,18 @@ abstract class Module extends Command
             return;
         }
 
+        $version = '1.0.0';
+
+        $module = module($this->alias);
+
+        if (is_object($module) && method_exists($module, 'get')) {
+            $version = $module->get('version') ?: $version;
+        }
+
         ModelHistory::create([
             'company_id' => $this->company_id,
             'module_id' => $this->model->id,
-            'version' => module($this->alias)->get('version'),
+            'version' => $version,
             'description' => trans('modules.' . $action, ['module' => $this->alias]),
             'created_from' => source_name(),
             'created_by' => user_id(),
