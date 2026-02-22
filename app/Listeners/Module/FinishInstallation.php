@@ -4,7 +4,9 @@ namespace App\Listeners\Module;
 
 use App\Events\Module\Installed as Event;
 use App\Traits\Permissions;
-use Artisan;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class FinishInstallation
 {
@@ -18,10 +20,38 @@ class FinishInstallation
      */
     public function handle(Event $event)
     {
-        $module = module($event->alias);
+        $alias = (string) ($event->alias ?? '');
 
-        Artisan::call('module:migrate', ['alias' => $event->alias, '--force' => true]);
+        if ($alias === '') {
+            return;
+        }
 
-        $this->attachDefaultModulePermissions($module);
+        $manifest = rtrim(module()->getModulePath($alias), '/\\') . DIRECTORY_SEPARATOR . 'module.json';
+
+        if (!is_file($manifest)) {
+            Log::warning('Skipping module migration/permissions; module manifest not found.', [
+                'alias' => $alias,
+                'manifest' => $manifest,
+            ]);
+
+            return;
+        }
+
+        try {
+            Artisan::call('module:migrate', ['alias' => $alias, '--force' => true]);
+        } catch (Throwable $e) {
+            Log::warning('Module migration failed during install; continuing without it.', [
+                'alias' => $alias,
+                'error' => $e->getMessage(),
+            ]);
+
+            return;
+        }
+
+        $module = module($alias);
+
+        if ($module) {
+            $this->attachDefaultModulePermissions($module);
+        }
     }
 }
