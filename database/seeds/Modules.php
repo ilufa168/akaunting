@@ -36,12 +36,10 @@ class Modules extends Seeder
 
     private function installIfAvailable(string $alias, $company_id, string $locale): void
     {
-        $manifest = rtrim(module()->getModulePath($alias), '/\\') . DIRECTORY_SEPARATOR . 'module.json';
-
-        if (!is_file($manifest)) {
-            Log::warning('Skipping module install during company seeding; module manifest not found.', [
+        if (!module($alias)) {
+            Log::warning('Skipping module install during company seeding; module not discoverable by repository.', [
                 'alias' => $alias,
-                'manifest' => $manifest,
+                'expected_manifest' => rtrim(module()->getModulePath($alias), '/\\') . DIRECTORY_SEPARATOR . 'module.json',
             ]);
 
             return;

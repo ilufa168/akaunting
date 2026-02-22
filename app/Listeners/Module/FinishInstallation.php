@@ -26,12 +26,12 @@ class FinishInstallation
             return;
         }
 
-        $manifest = rtrim(module()->getModulePath($alias), '/\\') . DIRECTORY_SEPARATOR . 'module.json';
+        $module = module($alias);
 
-        if (!is_file($manifest)) {
-            Log::warning('Skipping module migration/permissions; module manifest not found.', [
+        if (!$module) {
+            Log::warning('Skipping module migration/permissions; module not discoverable by repository.', [
                 'alias' => $alias,
-                'manifest' => $manifest,
+                'expected_manifest' => rtrim(module()->getModulePath($alias), '/\\') . DIRECTORY_SEPARATOR . 'module.json',
             ]);
 
             return;
@@ -48,10 +48,6 @@ class FinishInstallation
             return;
         }
 
-        $module = module($alias);
-
-        if ($module) {
-            $this->attachDefaultModulePermissions($module);
-        }
+        $this->attachDefaultModulePermissions($module);
     }
 }
