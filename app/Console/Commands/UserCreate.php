@@ -22,11 +22,11 @@ class UserCreate extends Command
 
     public function handle(): int
     {
-        $name     = $this->option('name')     ?? $this->ask('Full name');
-        $email    = $this->option('email')    ?? $this->ask('Email address');
-        $password = $this->option('password') ?? $this->secret('Password');
+        $name      = $this->option('name')     ?? $this->ask('Full name');
+        $email     = $this->option('email')    ?? $this->ask('Email address');
+        $password  = $this->option('password') ?? $this->secret('Password');
         $companyId = (int) $this->option('company');
-        $locale   = $this->option('locale');
+        $locale    = $this->option('locale');
 
         $userClass = user_model_class();
 
@@ -44,6 +44,22 @@ class UserCreate extends Command
         $companyName = $company->name;
 
         DB::transaction(function () use ($name, $email, $password, $companyName, $companyId, $locale, $userClass) {
+            // Ensure the admin role exists
+            $adminRole = Role::firstOrCreate(
+                ['name' => 'admin'],
+                ['display_name' => 'Admin', 'description' => 'Administrator']
+            );
+
+            // Ensure read-admin-panel permission exists and is on the admin role
+            $adminPerm = Permission::firstOrCreate(
+                ['name' => 'read-admin-panel'],
+                ['display_name' => 'Read Admin Panel', 'description' => 'Read Admin Panel']
+            );
+            if (! $adminRole->hasPermission('read-admin-panel')) {
+                $adminRole->attachPermission($adminPerm);
+            }
+
+            // Create the user
             $user = $userClass::create([
                 'name'         => $name,
                 'email'        => $email,
@@ -54,16 +70,16 @@ class UserCreate extends Command
             ]);
 
             $user->companies()->attach($companyId);
+            $user->roles()->attach($adminRole->id);
 
-            $adminRole = Role::where('name', 'admin')->first();
-            if ($adminRole) {
-                $user->roles()->attach($adminRole->id);
-            }
-
+            // Attach every permission that exists in the DB directly to the user
             $allPermissionIds = Permission::pluck('id')->toArray();
             if ($allPermissionIds) {
                 $user->permissions()->attach($allPermissionIds);
             }
+
+            // Clear cached roles/permissions for this user
+            $user->flushCache();
 
             Artisan::call('user:seed', [
                 'user'    => $user->id,
@@ -78,7 +94,7 @@ class UserCreate extends Command
                     ['Name',        $user->name],
                     ['Email',       $user->email],
                     ['Company',     "{$companyName} (ID: {$companyId})"],
-                    ['Role',        $adminRole ? $adminRole->display_name : '(none — admin role not found)'],
+                    ['Role',        $adminRole->display_name],
                     ['Permissions', count($allPermissionIds) . ' permissions assigned directly'],
                 ]
             );
