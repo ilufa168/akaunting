@@ -41,7 +41,9 @@ class UserCreate extends Command
             return self::FAILURE;
         }
 
-        DB::transaction(function () use ($name, $email, $password, $companyId, $locale, $userClass) {
+        $companyName = $company->name;
+
+        DB::transaction(function () use ($name, $email, $password, $companyName, $companyId, $locale, $userClass) {
             $user = $userClass::create([
                 'name'         => $name,
                 'email'        => $email,
@@ -75,7 +77,7 @@ class UserCreate extends Command
                     ['ID',          $user->id],
                     ['Name',        $user->name],
                     ['Email',       $user->email],
-                    ['Company',     "{$company->name} (ID: {$companyId})"],
+                    ['Company',     "{$companyName} (ID: {$companyId})"],
                     ['Role',        $adminRole ? $adminRole->display_name : '(none — admin role not found)'],
                     ['Permissions', count($allPermissionIds) . ' permissions assigned directly'],
                 ]
